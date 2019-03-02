@@ -11,14 +11,13 @@ We put `_` before functions since we changed the rule of functions in `LinearAlg
 
 - [x] _svd
 - [x] _qr
-- [ ] _cholesky   # in Nabla.jl, there is already an implementation
-- [ ] _powermethod
-- [ ] _eigen
-- [ ] _inv
-- [ ] _lu
-- [ ] einsum
-- [ ] det
-- [ ] pfaffian
+- [ ] _cholesky   # Nabla.jl
+- [ ] _powermethod   # we need fixed point methods, trying hard ...
+- [ ] _eigen      # linear BP paper
+- [ ] _inv, _det  # Nabla.jl
+- [ ] _lu         # similar to qr
+- [ ] einsum      # Pytorch
+- [ ] pfaffian    # find it nowhere, lol
 
 ## How to Use
 If you are using `Flux.jl` and want to call `svd`, please type
