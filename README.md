@@ -16,6 +16,9 @@ We put `_` before functions since we changed the rule of functions in `LinearAlg
 - [ ] _eigen
 - [ ] _inv
 - [ ] _lu
+- [ ] einsum
+- [ ] det
+- [ ] pfaffian
 
 ## How to Use
 If you are using `Flux.jl` and want to call `svd`, please type
