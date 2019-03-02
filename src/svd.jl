@@ -1,15 +1,16 @@
-import LinearAlgebra: svd
-import LinearAlgebra
-using ..Tracker: @grad, data, track, TrackedTuple
-using AutoGrad
-import ..Tracker: _forward
+import LinearAlgebra: svd!, svd
+using LinearAlgebra
+using Flux.Tracker: @grad, data, track, TrackedTuple, TrackedArray
+import Flux.Tracker: _forward
+
+export _svd, _svd!
 
 function svd_back(U, S, V, dU, dS, dV)
     NS = length(S)
     S2 = S.^2
-    Sinv = 1 ./ S
+    Sinv = @. S/(S2+1e-12)
     F = S2' .- S2
-    @. F = F/(F^2 + 1e-12)
+    @. F = F/(F^2+1e-12)
 
     UdU = U'*dU
     VdV = V'*dV
@@ -22,13 +23,21 @@ function svd_back(U, S, V, dU, dS, dV)
     U*LinearAlgebra.Diagonal(Sinv) * dV' * (LinearAlgebra.I - V*V')
 end
 
+function _svd!(A)
+    U, S, V = svd!(A)
+    U, S, Matrix(V)
+end
+
 """
-    svd(A::TrackedArray) -> TrackedTuple
+    _svd(A::TrackedArray) -> TrackedTuple
 
 Return tracked tuple of (U, S, V) that `A == USV'`.
 """
-svd(A::TrackedArray) = track(svd, A)
-function _forward(::typeof(svd), a)
-    U, S, V = svd(data(a))
-    (U, S, Matrix(V)), Δ -> (svd_back(U, S, V, Δ...),)
+_svd!(A::TrackedArray) = track(_svd!, A)
+_svd(A) = _svd!(A |> copy)
+function _forward(::typeof(_svd!), a)
+    U, S, V = _svd!(data(a))
+    (U, S, V), Δ -> (svd_back(U, S, V, Δ...),)
 end
+
+Base.iterate(xs::TrackedTuple, state=1) = state > length(xs) ? nothing : (xs[state], state+1)

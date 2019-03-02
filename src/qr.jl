@@ -1,6 +1,7 @@
 using LinearAlgebra
 import LinearAlgebra: qr
-using AutoGrad
+
+export _qr
 
 # the one in tensorflow package
 function qr_back(q, r, dq, dr)
@@ -63,42 +64,11 @@ function _qr(x)
     Matrix(res.Q), res.R
 end
 
-@primitive _qr(x),dy,y qr_back_rankdef(x, y..., dy...)
+#using AutoGrad
+#@primitive _qr(x),dy,y qr_back_rankdef(x, y..., dy...)
 
-M, N = 4, 6
-A = randn(M, N)
-b = randn(N)
-AutoGrad.gradcheck(x->_qr(x)[2]*b |> sum, A)
-#@test AutoGrad.gradcheck(x->_qr(x)[1]*b |> sum, A)
-
-x = Param(A)
-y = @diff (_qr(x)[2][21])
-grad(y, x)
-
-function num_grad(f, x)
-    dx = similar(x)
-    δ = 1e-6
-    for i in LinearIndices(x)
-        x[i]+=δ/2
-        pos = f(x)
-        x[i]-=δ
-        neg = f(x)
-        x[i]+=δ/2
-        dx[i] = (pos-neg)/δ
-    end
-    dx
-end
-
-num_grad(x->_qr(x)[2][21], A)
-
-using Test
-@testset "qr" begin
-    M, N = 4, 6
-    A = randn(M, N)
-    b = randn(M)
-    #@test AutoGrad.gradcheck(x->_qr(x)[2]*b |> sum, A)
-    @test AutoGrad.gradcheck(x->_qr(x)[1]*b |> sum, A)
-
-    a = [1 2; 3 4]
-    @test copyltu!(a) == [1 3; 3 4]
+_qr(A::TrackedArray) = track(_qr, A)
+function _forward(::typeof(_qr), A)
+    Q, R = _qr(data(A))
+    (Q, R), Δ -> (qr_back_rankdef(data(A), Q, R, Δ...),)
 end

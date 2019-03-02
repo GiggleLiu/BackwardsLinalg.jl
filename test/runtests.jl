@@ -1,1 +1,3 @@
-include("autodiff.jl")
+include("svd.jl")
+include("qr.jl")
+include("trg.jl")
