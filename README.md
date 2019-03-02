@@ -1,5 +1,7 @@
 # Backward functions for Linear Algebra
 
+![#f03c15](https://placehold.it/15/f03c15/000000?text=+) This project is still in progress ...
+
 Backward functions for linear algebras,
 It is currently ported to `Flux.jl` for testing, but these porting codes will be moved to other places (like `Flux.jl`) in the future.
 
