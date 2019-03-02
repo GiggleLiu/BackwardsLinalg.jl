@@ -3,7 +3,10 @@
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) This project is still in progress ...
 
 Backward functions for linear algebras,
-It is currently ported to `Flux.jl` for testing, but these porting codes will be moved to other places (like `Flux.jl`) in the future.
+It is currently ported to `Flux.jl` for testing, but these porting codes will be moved to other places (like merging them to `Flux.jl`) in the future.
+
+## Why we need LinearBackwards.jl?
+Not only in Julia, but also in well known machine learning packages in python like pytorch, one can hardly find a numerical stable implementations of linear algebra function. This missing piece is crutial to autodiff applications in tensor networks algorithms.
 
 ## Table of Supported Functions
 
