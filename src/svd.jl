@@ -3,14 +3,22 @@ using LinearAlgebra
 using Flux.Tracker: @grad, data, track, TrackedTuple, TrackedArray
 import Flux.Tracker: _forward
 
-export _svd, _svd!
+export _svd, _svd!, svd_back
 
-function svd_back(U, S, V, dU, dS, dV)
+"""
+    svd_back(U, S, V, dU, dS, dV)
+
+backward for SVD decomposition
+
+References:
+    https://j-towns.github.io/papers/svd-derivative.pdf
+"""
+function svd_back(U, S, V, dU, dS, dV; η=1e-12)
     NS = length(S)
     S2 = S.^2
-    Sinv = @. S/(S2+1e-12)
+    Sinv = @. S/(S2+η)
     F = S2' .- S2
-    @. F = F/(F^2+1e-12)
+    @. F = F/(F^2+η)
 
     UdU = U'*dU
     VdV = V'*dV

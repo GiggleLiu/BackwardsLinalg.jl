@@ -1,10 +1,13 @@
-using LinearAlgebra
+using LinearAlgebra, Flux
+using Flux.Tracker: @grad, data, track, TrackedTuple, TrackedArray
+import Flux.Tracker: _forward
 import LinearAlgebra: qr
 
-export _qr
+export _qr, qr_back
 
+#=
 # the one in tensorflow package
-function qr_back(q, r, dq, dr)
+function qr_back_fullrank(q, r, dq, dr)
     size(r, 1) != size(r, 2) && throw(NotImplementedError("QrGrad not implemented when ncols > nrows or full_matrices is true and ncols != nrows."))
     dq isa Nothing && (dq = zero(q))
     dr isa Nothing && (dr = zero(r))
@@ -23,7 +26,13 @@ function qr_back(q, r, dq, dr)
     grad_b = trsolve(r, dq - q * qdq)
     grad_a + grad_b
 end
+=#
 
+"""
+    copyltu!(A::AbstractMatrix) -> AbstractMatrix
+
+copy the lower triangular to upper triangular.
+"""
 function copyltu!(A::AbstractMatrix)
     m, n = size(A)
     for i=1:m-1
@@ -34,29 +43,52 @@ function copyltu!(A::AbstractMatrix)
     A
 end
 
-# the one in the paper
-function qr_back(q, r, dq, dr)
-    dq isa Nothing && (dq = zero(q))  # fix this lazy impl
-    dr isa Nothing && (dr = zero(r))
-    M = r*dr' - dq'*q
-    b = dq + q*copyltu!(M)
-    #(dq + q*copyltu!(M))*inv(r')
-    LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))'
+using MacroTools
+"""
+    qr_back_fullrank(q, r, dq, dr) -> Matrix
+
+backward for QR decomposition, for input matrix (in forward pass) with M > N.
+
+References:
+    Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
+"""
+@generated function qr_back_fullrank(q, r, dq, dr)
+    dqnot0 = !(dq <: Nothing)
+    drnot0 = !(dr <: Nothing)
+    ex = drnot0 ? :(r*dr') : :()
+    ex = dqnot0 ? :($ex - dq'*q) : ex
+    :(b = $(dqnot0 ? :(dq) : :()) + q*copyltu!($ex);
+      LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
 end
 
-function qr_back_rankdef(A, q, r, dq, dr)
-    size(r, 1) == size(r, 2) && return qr_back(q, r, dq ,dr)
-    dq isa Nothing && (dq = zero(q))  # fix this lazy impl
-    dr isa Nothing && (dr = zero(r))
-    M, N = size(r)
-    B = view(A,:,M+1:N)
-    dU = view(dr,:,1:M)
-    dD = view(dr,:,M+1:N)
-    U = view(r,:,1:M)
-    D = view(r,:,M+1:N)
-    da = qr_back(q, U, dq+B*dD', dU)
-    db = q*dD
-    hcat(da, db)
+"""
+    qr_back(A, q, r, dq, dr) -> Matrix
+
+backward for QR decomposition, for an arbituary shaped input matrix.
+
+References:
+    Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
+    HaiJun's paper.
+"""
+@generated function qr_back(A, q, r, dq, dr)
+    dqnot0 = !(dq <: Nothing)
+    drnot0 = !(dr <: Nothing)
+    ex = quote
+        size(r, 1) == size(r, 2) && return qr_back_fullrank(q, r, dq ,dr)
+        M, N = size(r)
+        B = view(A,:,M+1:N)
+        U = view(r,:,1:M)
+        D = view(r,:,M+1:N)
+        $(if drnot0
+            :(dD = view(dr,:,M+1:N);
+            da = qr_back_fullrank(q, U, $(dqnot0 ? :(dq+B*dD') : :(B*dD')), view(dr,:,1:M));
+            db = q*dD)
+        else
+            :(da = qr_back_fullrank(q, U, dq, nothing);
+            db = zero(B))
+        end)
+        hcat(da, db)
+    end
 end
 
 function _qr(x)
@@ -64,11 +96,8 @@ function _qr(x)
     Matrix(res.Q), res.R
 end
 
-#using AutoGrad
-#@primitive _qr(x),dy,y qr_back_rankdef(x, y..., dy...)
-
 _qr(A::TrackedArray) = track(_qr, A)
 function _forward(::typeof(_qr), A)
     Q, R = _qr(data(A))
-    (Q, R), Δ -> (qr_back_rankdef(data(A), Q, R, Δ...),)
+    (Q, R), Δ -> (qr_back(data(A), Q, R, Δ...),)
 end

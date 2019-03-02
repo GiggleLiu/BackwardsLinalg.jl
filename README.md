@@ -17,9 +17,14 @@ We put `_` before functions since we changed the rule of functions in `LinearAlg
 
 ## How to Use
 If you are using `Flux.jl` and want to call `svd`, please type
-```
+```julia
 using Flux, LinalgAutodiff
 
 U, S, V = _svd(A)
 ```
 otherwise please check `svd_back` to see how it works.
+
+Try something interesting (the backward of TRG code, `TensorOperations.jl` is required.)
+```bash
+julia test/trg.py
+```

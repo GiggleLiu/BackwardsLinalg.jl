@@ -26,26 +26,15 @@ using Test
 end
 
 @testset "svdflux" begin
-    M, N = 4, 6
-    K = min(M, N)
-    A = randn(M, N)
-    PA = A|>param
-    res = _svd(PA)
-    U, S, V = res
-    dU, dS, dV = randn(M, K), randn(K), randn(N, K)
-    Tracker.back!(res, (dU, dS, dV))
-    dA = Tracker.grad(PA)
+    for (M, N) in [(4, 6), (4, 4), (6, 4)]
+        K = min(M, N)
+        A = randn(M, N)
 
-    for i in 1:length(A)
-        δ = 0.01
-        A[i] -= δ/2
-        U1, S1, V1 = _svd(A)
-        A[i] += δ
-        U2, S2, V2 = _svd(A)
-        A[i] -= δ/2
-        δS = S2 .- S1
-        δU = U2 .- U1
-        δV = V2 .- V1
-        @test isapprox(sum(dS .* δS) + sum(dU .* δU) + sum(dV .* δV), dA[i] * δ, atol=1e-5)
+        b = randn(K)
+        function tfunc(x)
+            U, S, V = _svd(x)
+            sum(U.*b') + sum(V.*b') + sum(S'*b)
+        end
+        @test Tracker.gradcheck(tfunc, A)
     end
 end
