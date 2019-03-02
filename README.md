@@ -7,9 +7,9 @@ It is currently ported to `Flux.jl` for testing, but these porting codes will be
 
 We put `_` before functions since we changed the rule of functions in `LinearAlgebra`, the outputs are Tuples.
 
-- [*] _svd
-- [*] _qr
-- [ ] _cholesky   # in Nabla.jl, there is an implementation
+- [x] _svd
+- [x] _qr
+- [ ] _cholesky   # in Nabla.jl, there is already an implementation
 - [ ] _powermethod
 - [ ] _eigen
 - [ ] _inv
