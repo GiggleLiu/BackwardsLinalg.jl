@@ -24,7 +24,7 @@ U, S, V = _svd(A)
 ```
 otherwise please check `svd_back` to see how it works.
 
-Try something interesting (the backward of TRG code, `TensorOperations.jl` is required.)
+Try something interesting (the backward of TRG code, `TensorOperations.jl` (as well as patch https://github.com/Jutho/TensorOperations.jl/pull/59) is required.)
 ```bash
 julia test/trg.py
 ```
