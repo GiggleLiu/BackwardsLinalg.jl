@@ -1,4 +1,4 @@
-include("../src/qr.jl")
+using LinalgBackwards
 using Test
 
 @testset "_qr" begin

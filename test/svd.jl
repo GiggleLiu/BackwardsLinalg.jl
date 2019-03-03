@@ -1,4 +1,4 @@
-include("../src/svd.jl")
+using LinalgBackwards
 using Flux
 using Flux.Tracker: @grad, data, track, TrackedTuple
 using Test

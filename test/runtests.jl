@@ -1,3 +1,5 @@
-include("svd.jl")
-include("qr.jl")
-include("trg.jl")
+@testset "LinalgBackwards.jl" begin
+    include("svd.jl")
+    include("qr.jl")
+    include("trg.jl")
+end

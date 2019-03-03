@@ -1,6 +1,4 @@
 using LinearAlgebra, Flux
-using Flux.Tracker: @grad, data, track, TrackedTuple, TrackedArray
-import Flux.Tracker: _forward
 import LinearAlgebra: qr
 
 export _qr, qr_back
@@ -94,10 +92,4 @@ end
 function _qr(x)
     res = qr(x)
     Matrix(res.Q), res.R
-end
-
-_qr(A::TrackedArray) = track(_qr, A)
-function _forward(::typeof(_qr), A)
-    Q, R = _qr(data(A))
-    (Q, R), Δ -> (qr_back(data(A), Q, R, Δ...),)
 end

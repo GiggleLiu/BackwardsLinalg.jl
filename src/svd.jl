@@ -1,7 +1,5 @@
 import LinearAlgebra: svd!, svd
 using LinearAlgebra
-using Flux.Tracker: @grad, data, track, TrackedTuple, TrackedArray
-import Flux.Tracker: _forward
 
 export _svd, _svd!, svd_back
 
@@ -36,16 +34,4 @@ function _svd!(A)
     U, S, Matrix(V)
 end
 
-"""
-    _svd(A::TrackedArray) -> TrackedTuple
-
-Return tracked tuple of (U, S, V) that `A == USV'`.
-"""
-_svd!(A::TrackedArray) = track(_svd!, A)
 _svd(A) = _svd!(A |> copy)
-function _forward(::typeof(_svd!), a)
-    U, S, V = _svd!(data(a))
-    (U, S, V), Δ -> (svd_back(U, S, V, Δ...),)
-end
-
-Base.iterate(xs::TrackedTuple, state=1) = state > length(xs) ? nothing : (xs[state], state+1)
