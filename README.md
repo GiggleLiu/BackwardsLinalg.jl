@@ -22,10 +22,11 @@ We put `_` before functions since we changed the rule of functions in `LinearAlg
 - [ ] _cholesky   # Nabla.jl
 - [ ] _powermethod   # we need fixed point methods, trying hard ...
 - [ ] _eigen      # linear BP paper
-- [ ] _inv, _det  # Nabla.jl
 - [ ] _lu         # similar to qr
 - [ ] einsum      # Pytorch
 - [ ] pfaffian    # find it nowhere, lol
+
+For `logdet`, `det` and `tr`, people can find it in `ChainRules.jl` and `Nabla.jl`.
 
 ## How to Use
 If you are using `Flux.jl` and want to call `svd`, please type
