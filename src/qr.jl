@@ -1,7 +1,7 @@
 using LinearAlgebra, Flux
 import LinearAlgebra: qr
 
-export _qr, qr_back
+export _qr, qr_back, copyltu!
 
 #=
 # the one in tensorflow package
@@ -41,7 +41,6 @@ function copyltu!(A::AbstractMatrix)
     A
 end
 
-using MacroTools
 """
     qr_back_fullrank(q, r, dq, dr) -> Matrix
 

@@ -1,4 +1,4 @@
-include("../src/svd.jl")
+using LinalgBackwards
 using LinearAlgebra:svd, Diagonal
 using TensorOperations
 using Flux, Test
@@ -61,8 +61,8 @@ end
     res = Tracker.grad(K)
 
     δ = 1e-3
-    Z0 = TRG(data(K)-δ/2, Dcut, n)
-    Z1 = TRG(data(K)+δ/2, Dcut, n)
+    Z0 = TRG(Tracker.data(K)-δ/2, Dcut, n)
+    Z1 = TRG(Tracker.data(K)+δ/2, Dcut, n)
     ngrad = (Z1 - Z0)/δ
     @test isapprox(res, ngrad, atol=1e-2)
 end
