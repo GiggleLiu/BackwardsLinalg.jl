@@ -18,3 +18,9 @@ function _forward(::typeof(_qr), A)
     Q, R = _qr(data(A))
     (Q, R), Δ -> (qr_back(data(A), Q, R, Δ...),)
 end
+
+_diageig(A::TrackedArray) = track(_diageig, A)
+function _forward(::typeof(_diageig), A)
+    λ, U = _diageig(data(A))
+    (λ, U), Δ -> (diageig_back(λ, U, Δ...),)
+end
