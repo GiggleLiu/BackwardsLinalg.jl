@@ -18,7 +18,7 @@ Not only in Julia, but also in well known machine learning packages in python li
 We put `_` before functions since we changed the rule of functions in `LinearAlgebra`, the outputs are Tuples.
 
 - [x] _svd
-- [x] _qr
+- [x] qr
 - [ ] _cholesky   # Nabla.jl
 - [ ] _powermethod   # we need fixed point methods, trying hard ...
 - [ ] _eigen      # linear BP paper
