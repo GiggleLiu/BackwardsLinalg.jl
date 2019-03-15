@@ -3,19 +3,19 @@ import Flux.Tracker: _forward
 Base.iterate(xs::TrackedTuple, state=1) = state > length(xs) ? nothing : (xs[state], state+1)
 
 """
-    _svd(A::TrackedArray) -> TrackedTuple
+    svd(A::TrackedArray) -> TrackedTuple
 
 Return tracked tuple of (U, S, V) that `A == USV'`.
 """
-_svd!(A::TrackedArray) = track(_svd!, A)
-function _forward(::typeof(_svd!), a)
-    U, S, V = _svd!(data(a))
+svd!(A::TrackedArray) = track(svd!, A)
+function _forward(::typeof(svd!), a)
+    U, S, V = svd!(data(a))
     (U, S, V), Δ -> (svd_back(U, S, V, Δ...),)
 end
 
-_qr(A::TrackedArray) = track(_qr, A)
-function _forward(::typeof(_qr), A)
-    Q, R = _qr(data(A))
+qr(A::TrackedArray) = track(qr, A)
+function _forward(::typeof(qr), A)
+    Q, R = qr(data(A))
     (Q, R), Δ -> (qr_back(data(A), Q, R, Δ...),)
 end
 
@@ -23,4 +23,10 @@ _diageig(A::TrackedArray) = track(_diageig, A)
 function _forward(::typeof(_diageig), A)
     λ, U = _diageig(data(A))
     (λ, U), Δ -> (diageig_back(λ, U, Δ...),)
+end
+
+lq(A::TrackedArray) = track(lq, A)
+function _forward(::typeof(lq), A)
+    L, Q = lq(data(A))
+    (L, Q), Δ -> (lq_back(data(A), L, Q, Δ...),)
 end

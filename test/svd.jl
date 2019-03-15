@@ -7,16 +7,16 @@ using Test
     M, N = 4, 6
     K = min(M, N)
     A = randn(M, N)
-    U, S, V = _svd(A)
+    U, S, V = svd(A)
     dU, dS, dV = randn(M, K), randn(K), randn(N, K)
     dA = svd_back(U, S, V, dU, dS, dV)
 
     for i in 1:length(A)
         δ = 0.01
         A[i] -= δ/2
-        U1, S1, V1 = _svd(A)
+        U1, S1, V1 = svd(A)
         A[i] += δ
-        U2, S2, V2 = _svd(A)
+        U2, S2, V2 = svd(A)
         A[i] -= δ/2
         δS = S2 .- S1
         δU = U2 .- U1
@@ -32,7 +32,7 @@ end
 
         b = randn(K)
         function tfunc(x)
-            U, S, V = _svd(x)
+            U, S, V = svd(x)
             sum(U.*b') + sum(V.*b') + sum(S'*b)
         end
         @test Tracker.gradcheck(tfunc, A)

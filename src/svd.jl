@@ -1,7 +1,4 @@
-import LinearAlgebra: svd!, svd
-using LinearAlgebra
-
-export _svd, _svd!, svd_back
+export svd, svd!, svd_back
 
 """
     svd_back(U, S, V, dU, dS, dV)
@@ -29,9 +26,9 @@ function svd_back(U, S, V, dU, dS, dV; η=1e-12)
     U*LinearAlgebra.Diagonal(Sinv) * dV' * (LinearAlgebra.I - V*V')
 end
 
-function _svd!(A)
-    U, S, V = svd!(A)
+function svd!(A)
+    U, S, V = LinearAlgebra.svd!(A)
     U, S, Matrix(V)
 end
 
-_svd(A) = _svd!(A |> copy)
+svd(A) = svd!(A |> copy)

@@ -1,7 +1,4 @@
-using LinearAlgebra, Flux
-import LinearAlgebra: qr
-
-export _qr, qr_back, copyltu!
+export qr, qr_back, copyltu!, lq, lq_back
 
 #=
 # the one in tensorflow package
@@ -17,7 +14,7 @@ function qr_back_fullrank(q, r, dq, dr)
     ut = tril!(qdq_ + rdr_)
 
     function trsolve(r, x)
-        LAPACK.trtrs!('U', 'N', 'N', r, Matrix(x'))'
+        LinearAlgebra.LAPACK.trtrs!('U', 'N', 'N', r, Matrix(x'))'
     end
 
     grad_a = q * (dr + trsolve(r, ut))
@@ -55,7 +52,7 @@ References:
     ex = drnot0 ? :(r*dr') : :()
     ex = dqnot0 ? :($ex - dq'*q) : ex
     :(b = $(dqnot0 ? :(dq) : :()) + q*copyltu!($ex);
-      LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
+      LinearAlgebra.LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
 end
 
 """
@@ -88,7 +85,25 @@ References:
     end
 end
 
-function _qr(x)
-    res = qr(x)
+function qr(x)
+    res = LinearAlgebra.qr(x)
     Matrix(res.Q), res.R
+end
+
+function lq(x)
+    res = LinearAlgebra.lq(x)
+    res.L, Matrix(res.Q)
+end
+
+"""
+    lq_back(A, q, r, dq, dr) -> Matrix
+
+backward for LQ decomposition, for an arbituary shaped input matrix.
+
+References:
+    Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
+    HaiJun's paper.
+"""
+function lq_back(A, l, q, dl, dq)
+    qr_back(A', q', l' |> Matrix, dq', dl')' |> Matrix
 end

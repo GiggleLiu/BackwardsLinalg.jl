@@ -4,7 +4,7 @@ using TensorOperations
 using Flux, Test
 
 function trg_svd(Ma, Dmax; tol::Float64=1e-12)
-    U, S, V = _svd(Ma)
+    U, S, V = svd(Ma)
     Dmax = min(searchsorted(S, tol, rev=true).stop, Dmax)
     D = isqrt(size(Ma, 1))
     #FS = view(S, 1:Dmax)  # this does not work!!!
