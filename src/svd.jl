@@ -1,4 +1,5 @@
 export svd, svd!, svd_back
+using LinearAlgebra: I, Diagonal
 
 """
     svd_back(U, S, V, dU, dS, dV)
@@ -15,15 +16,15 @@ function svd_back(U, S, V, dU, dS, dV; η=1e-12)
     F = S2' .- S2
     @. F = F/(F^2+η)
 
-    UdU = U'*dU
-    VdV = V'*dV
+    J = F.*(transpose(U)*dU)
+    K = F.*(transpose(V)*dV)
 
-    Su = (F.*(UdU-UdU'))*LinearAlgebra.Diagonal(S)
-    Sv = LinearAlgebra.Diagonal(S) * (F.*(VdV-VdV'))
+    Su = (J+J')*Diagonal(S)
+    Sv = Diagonal(S) * (K+K')
 
-    U * (Su + Sv + LinearAlgebra.Diagonal(dS)) * V' +
-    (LinearAlgebra.I - U*U') * dU*LinearAlgebra.Diagonal(Sinv) * V' +
-    U*LinearAlgebra.Diagonal(Sinv) * dV' * (LinearAlgebra.I - V*V')
+    conj(U) * (Su + Sv + Diagonal(dS)) * transpose(V) +
+    transpose(V * Diagonal(Sinv) * transpose(dU) * (I - U*U')) +
+    conj(U * Diagonal(Sinv) * transpose(dV) * (I - V*V'))
 end
 
 function svd!(A)
