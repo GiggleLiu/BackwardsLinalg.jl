@@ -8,6 +8,7 @@ backward for SVD decomposition
 
 References:
     https://j-towns.github.io/papers/svd-derivative.pdf
+    https://giggleliu.github.io/2019/04/02/einsumbp.html
 """
 function svd_back(U, S, V, dU, dS, dV; η=1e-12)
     NS = length(S)

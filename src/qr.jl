@@ -1,4 +1,4 @@
-export qr, qr_back, copyltu!, lq, lq_back
+export qr_back, copyltu!, lq, lq_back
 
 #=
 # the one in tensorflow package
@@ -49,9 +49,9 @@ References:
 @generated function qr_back_fullrank(q, r, dq, dr)
     dqnot0 = !(dq <: Nothing)
     drnot0 = !(dr <: Nothing)
-    ex = drnot0 ? :(r*dr') : :()
-    ex = dqnot0 ? :($ex - dq'*q) : ex
-    :(b = $(dqnot0 ? :(dq) : :()) + q*copyltu!($ex);
+    (!dqnot0 && !drnot0) && return :(nothing)
+    ex = drnot0 && dqnot0 ? :(r*dr' - dq'*q) : (dqnot0 ? :(-dq'*q) : :(r*dr'))
+    :(b = $(dqnot0 ? :(dq) : :(ZeroAdder())) + q*copyltu!($ex);
       LinearAlgebra.LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
 end
 
@@ -67,6 +67,7 @@ References:
 @generated function qr_back(A, q, r, dq, dr)
     dqnot0 = !(dq <: Nothing)
     drnot0 = !(dr <: Nothing)
+    (!dqnot0 && !drnot0) && return :(nothing)
     ex = quote
         size(r, 1) == size(r, 2) && return qr_back_fullrank(q, r, dq ,dr)
         M, N = size(r)
@@ -85,18 +86,8 @@ References:
     end
 end
 
-function qr(x)
-    res = LinearAlgebra.qr(x)
-    Matrix(res.Q), res.R
-end
-
-function lq(x)
-    res = LinearAlgebra.lq(x)
-    res.L, Matrix(res.Q)
-end
-
 """
-    lq_back(A, q, r, dq, dr) -> Matrix
+    lq_back(A, l, q, dl, dq) -> Matrix
 
 backward for LQ decomposition, for an arbituary shaped input matrix.
 

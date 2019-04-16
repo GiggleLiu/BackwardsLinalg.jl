@@ -115,7 +115,7 @@ end
 end
 
 @testset "svdbp-complex-U" begin
-    M, N = 6, 4
+    M, N = 4, 6
     T = ComplexF64
     K = min(M, N)
     A = randn(T, M, N)
@@ -216,6 +216,6 @@ end
         A[i] -= δ/2
         ng = (f2-f1)
         @test isapprox(ng, ag[i]*δ+conj(ag[i])*conj(δ), atol=1e-7, rtol=1e-7)
-        #@show ng, ag[i]*δ+conj(ag[i])*conj(δ)
+        @show ng, ag[i]*δ+conj(ag[i])*conj(δ)
     end
 end
