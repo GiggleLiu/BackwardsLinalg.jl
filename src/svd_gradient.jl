@@ -1,5 +1,3 @@
-using LinearAlgebra
-
 """
     svd_back(U, S, V, dU, dS, dV)
 
@@ -9,7 +7,7 @@ References:
     https://j-towns.github.io/papers/svd-derivative.pdf
     https://giggleliu.github.io/2019/04/02/einsumbp.html
 """
-function svd_back(U::AbstractArray{T}, S, V, dU, dS, dV; η=1e-12) where T
+function svd_back(U::AbstractArray{T}, S, V, dU, dS, dV; η=1e-40) where T
     all(isnothing, (dU, dS, dV)) && return nothing
     NS = length(S)
     S2 = S.^2
