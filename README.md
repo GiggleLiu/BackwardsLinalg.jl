@@ -21,7 +21,7 @@ We put `_` before functions since we changed the rule of functions in `LinearAlg
 - [x] qr
 - [ ] _cholesky   # Nabla.jl
 - [ ] _powermethod   # we need fixed point methods, trying hard ...
-- [ ] _eigen      # linear BP paper
+- [x] _eigen      # linear BP paper
 - [ ] _lu         # similar to qr
 - [ ] einsum      # Pytorch
 - [ ] pfaffian    # find it nowhere, lol
