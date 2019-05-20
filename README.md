@@ -1,7 +1,5 @@
 # Backward functions for Linear Algebra
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://GiggleLiu.github.io/LinalgBackwards.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://GiggleLiu.github.io/LinalgBackwards.jl/dev)
 [![Build Status](https://travis-ci.com/GiggleLiu/LinalgBackwards.jl.svg?branch=master)](https://travis-ci.com/GiggleLiu/LinalgBackwards.jl)
 [![Codecov](https://codecov.io/gh/GiggleLiu/LinalgBackwards.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/GiggleLiu/LinalgBackwards.jl)
 
