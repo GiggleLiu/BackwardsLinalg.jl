@@ -1,28 +1,5 @@
 export qr_back, copyltu!, lq, lq_back
 
-#=
-# the one in tensorflow package
-function qr_back_fullrank(q, r, dq, dr)
-    size(r, 1) != size(r, 2) && throw(NotImplementedError("QrGrad not implemented when ncols > nrows or full_matrices is true and ncols != nrows."))
-    dq isa Nothing && (dq = zero(q))
-    dr isa Nothing && (dr = zero(r))
-
-    qdq = q' * dq
-    qdq_ = qdq - qdq'
-    rdr = r * dr'
-    rdr_ = rdr - rdr'
-    ut = tril!(qdq_ + rdr_)
-
-    function trsolve(r, x)
-        LinearAlgebra.LAPACK.trtrs!('U', 'N', 'N', r, Matrix(x'))'
-    end
-
-    grad_a = q * (dr + trsolve(r, ut))
-    grad_b = trsolve(r, dq - q * qdq)
-    grad_a + grad_b
-end
-=#
-
 """
     copyltu!(A::AbstractMatrix) -> AbstractMatrix
 
@@ -31,8 +8,9 @@ copy the lower triangular to upper triangular.
 function copyltu!(A::AbstractMatrix)
     m, n = size(A)
     for i=1:m-1
+        A[i,i] = real(A[i,i])
         for j=i+1:n
-            @inbounds A[i,j] = A[j,i]
+            @inbounds A[i,j] = conj(A[j,i])
         end
     end
     A
@@ -62,7 +40,7 @@ backward for QR decomposition, for an arbituary shaped input matrix.
 
 References:
     Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
-    HaiJun's paper.
+    Differentiable Programming Tensor Networks, Hai-Jun Liao, Jin-Guo Liu, Lei Wang, Tao Xiang
 """
 @generated function qr_back(A, q, r, dq, dr)
     dqnot0 = !(dq <: Nothing)
@@ -93,8 +71,46 @@ backward for LQ decomposition, for an arbituary shaped input matrix.
 
 References:
     Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
+    Differentiable Programming Tensor Networks, Hai-Jun Liao, Jin-Guo Liu, Lei Wang, Tao Xiang
+"""
+function lq_back_fullrank(L, Q, dL, dQ)
+    M = ZeroAdder()
+    dL === nothing || (M += L'*dL)
+    dQ === nothing || (M -= dQ*Q')
+    C = copyltu!(M)*Q
+    if dQ !== nothing
+        C += dQ
+    end
+    inv(L)' * C
+end
+
+"""
+    lq_back(A, L, Q, dL, dQ) -> Matrix
+
+backward for QR decomposition, for an arbituary shaped input matrix.
+
+References:
+    Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
     HaiJun's paper.
 """
-function lq_back(A, l, q, dl, dq)
-    qr_back(A', q', l' |> Matrix, dq', dl')' |> Matrix
+@generated function lq_back(A, L, Q, dL, dQ)
+    dunot0 = !(dQ <: Nothing)
+    dlnot0 = !(dL <: Nothing)
+    (!dunot0 && !dlnot0) && return :(nothing)
+    ex = quote
+        N, M = size(L)
+        M == N && return lq_back_fullrank(L, Q, dL, dQ)
+        B = view(A,M+1:N,:)
+        U = view(L,1:M,:)
+        D = view(L,M+1:N,:)
+        $(if dlnot0
+            :(dD = view(dL,M+1:N,:);
+            da = lq_back_fullrank(U, Q, view(dL,1:M,:), $(dunot0 ? :(dQ+dD'*B) : :(dD'*B)));
+            db = dD*Q)
+        else
+            :(da = lq_back_fullrank(U, Q, nothing, dQ);
+            db = zero(B))
+        end)
+        vcat(da, db)
+    end
 end
