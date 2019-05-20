@@ -30,13 +30,22 @@ For `logdet`, `det` and `tr`, people can find it in `ChainRules.jl` and `Nabla.j
 Derivation of adjoint backward functions could be found [here](https://giggleliu.github.io/2019/04/02/einsumbp.html).
 
 ## How to Use
-If you are using `Flux.jl` and want to call `svd`, please type
+It currently ports into `Zygote.jl`
 ```julia
-using Flux, LinalgAutodiff
+using Zygote, LinalgBackwards
 
-U, S, V = _svd(A)
+function loss(A)
+    M, N = size(A)
+    U, S, V = svd(A)
+    psi = U[:,1]
+    H = randn(ComplexF64, M, M)
+    H+=H'
+    real(psi'*H*psi)[]
+end
+
+a = randn(ComplexF64, 4, 6)
+g = loss'(a)
 ```
-otherwise please check `svd_back` to see how it works.
 
 Try something interesting (the backward of TRG code, `TensorOperations.jl` (as well as patch https://github.com/Jutho/TensorOperations.jl/pull/59) is required.)
 ```bash
