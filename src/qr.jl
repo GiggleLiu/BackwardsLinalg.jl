@@ -30,7 +30,7 @@ References:
     (!dqnot0 && !drnot0) && return :(nothing)
     ex = drnot0 && dqnot0 ? :(r*dr' - dq'*q) : (dqnot0 ? :(-dq'*q) : :(r*dr'))
     :(b = $(dqnot0 ? :(dq) : :(ZeroAdder())) + q*copyltu!($ex);
-      LinearAlgebra.LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
+      LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
 end
 
 """
@@ -81,7 +81,8 @@ function lq_back_fullrank(L, Q, dL, dQ)
     if dQ !== nothing
         C += dQ
     end
-    inv(L)' * C
+    #inv(L)' * C
+    LAPACK.trtrs!('L', 'C', 'N', L, C)
 end
 
 """
