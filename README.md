@@ -22,11 +22,12 @@ We put `_` before functions since we changed the rule of functions in `LinearAlg
 - [ ] _cholesky   # Nabla.jl
 - [ ] _powermethod   # we need fixed point methods, trying hard ...
 - [x] _eigen      # linear BP paper
-- [ ] _lu         # similar to qr
-- [ ] einsum      # Pytorch
+- [x] _lq         # similar to qr
 - [ ] pfaffian    # find it nowhere, lol
 
 For `logdet`, `det` and `tr`, people can find it in `ChainRules.jl` and `Nabla.jl`.
+
+Derivation of adjoint backward functions could be found [here](https://giggleliu.github.io/2019/04/02/einsumbp.html).
 
 ## How to Use
 If you are using `Flux.jl` and want to call `svd`, please type
