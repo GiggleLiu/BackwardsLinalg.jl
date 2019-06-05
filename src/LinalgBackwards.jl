@@ -12,8 +12,8 @@ Base.:-(zero::ZeroAdder, a) = -a
 Base.:-(zero::ZeroAdder) = zero
 
 include("qr.jl")
-include("svd_gradient.jl")
-include("eigen_gradient.jl")
+include("svd.jl")
+include("eigen.jl")
 include("zygote.jl")
 
 end
