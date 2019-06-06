@@ -13,14 +13,14 @@ Not only in Julia, but also in well known machine learning packages in python li
 
 ## Table of Supported Functions
 
-We put `_` before functions since we changed the rule of functions in `LinearAlgebra`, the outputs are Tuples.
+Note: it will change the default behavior, we are considering not changing the output type (SVD, QR) latter when Zygote is stronger.
 
-- [x] _svd
+- [x] svd and rsvd (randomized SVD)
 - [x] qr
-- [ ] _cholesky   # Nabla.jl
-- [ ] _powermethod   # we need fixed point methods, trying hard ...
-- [x] _eigen      # linear BP paper
-- [x] _lq         # similar to qr
+- [ ] cholesky   # Nabla.jl
+- [ ] powermethod   # we need fixed point methods, trying hard ...
+- [x] eigen      # linear BP paper, only symmetric case considered
+- [x] lq         # similar to qr
 - [ ] pfaffian    # find it nowhere, lol
 
 For `logdet`, `det` and `tr`, people can find it in `ChainRules.jl` and `Nabla.jl`.
