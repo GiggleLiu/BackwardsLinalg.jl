@@ -22,6 +22,11 @@ end
     (U, S, V), dy -> (svd_back(U, S, V, dy...),)
 end
 
+@adjoint function rsvd(A, args...; kwargs...)
+    U, S, V = rsvd(A, args...; kwargs...)
+    (U, S, V), dy -> (svd_back(U, S, V, dy...),)
+end
+
 @adjoint function eigen(A)
     E, U = eigen(A)
     U = Matrix(U)
