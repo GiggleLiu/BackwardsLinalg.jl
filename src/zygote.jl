@@ -13,17 +13,17 @@ end
 @adjoint function lq(A)
     res = lq(A)
     L, Q = res.L, Matrix(res.Q)
-    (L, Q), dy -> (lq_back(A, L, Q, dy),)
+    (L, Q), dy -> (lq_back(A, L, Q, dy...),)
 end
 
 @adjoint function svd(A)
-    res = svd(A)
+    U, S, V = svd(A)
     V = Matrix(V)
-    res, dy -> (svd_back(res..., dy.U, dy.S, dy.V),)
+    (U, S, V), dy -> (svd_back(U, S, V, dy...),)
 end
 
-@adjoint function rsvd(A)
-    U, S, V = rsvd(A)
+@adjoint function rsvd(A, args...; kwargs...)
+    U, S, V = rsvd(A, args...; kwargs...)
     (U, S, V), dy -> (svd_back(U, S, V, dy...),)
 end
 

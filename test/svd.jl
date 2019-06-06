@@ -1,6 +1,6 @@
 using Test
 using LinalgBackwards
-using Random
+using Random, LinearAlgebra
 
 @testset "svd grad U" begin
     function loss(A)
@@ -20,7 +20,6 @@ using Random
     end
 end
 
-
 @testset "svd grad V" begin
     function loss_v(A)
         M, N = size(A)
@@ -35,6 +34,7 @@ end
     for (M, N) in [(6, 3), (3, 6), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M,N)
+        @show loss_v(a)
         @test gradient_check(loss_v, a)
     end
 end
@@ -52,6 +52,18 @@ end
         a = randn(ComplexF64, M, N)
         @test gradient_check(loss, a)
     end
+end
+
+@testset "rsvd" begin
+    for shape in [(100, 30), (30, 30), (30, 100)]
+        A = randn(ComplexF64, shape...)
+        U, S, V = rsvd(A, 30)
+        @test U*Diagonal(S)*V' ≈ A
+    end
+
+    A = randn(100, 30) * randn(30, 70)
+    U, S, V = rsvd(A, 30)
+    @test U*Diagonal(S)*V' ≈ A
 end
 
 @testset "rsvd grad U" begin

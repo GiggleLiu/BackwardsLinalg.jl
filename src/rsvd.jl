@@ -1,6 +1,6 @@
 using LinearAlgebra
 
-function rsvd(A::Array{T}, k::Int, oversample=10, power=10, ortho=false) where T
+function rsvd(A::Array{T}, k::Int=min(size(A)...), oversample::Int=10, power::Int=10, ortho::Bool=false) where T
     m, n = size(A)
     p = min(n,oversample*k)
     Y = A * randn(T, n,p)
@@ -18,17 +18,4 @@ function rsvd(A::Array{T}, k::Int, oversample=10, power=10, ortho=false) where T
     V = V[:,1:k]
     s = s[1:k]
     return U,s,V
-end
-
-using Test
-@testset "svd" begin
-    for shape in [(100, 30), (30, 30), (30, 100)]
-        A = randn(shape...)
-        U, S, V = rsvd(A, 30)
-        @test U*Diagonal(S)*V' ≈ A
-    end
-
-    A = randn(100, 30) * randn(30, 70)
-    U, S, V = rsvd(A, 30)
-    @test U*Diagonal(S)*V' ≈ A
 end
