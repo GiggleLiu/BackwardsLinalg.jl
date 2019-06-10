@@ -8,7 +8,7 @@
 Backward functions for linear algebras,
 It is currently ported to `Zygote.jl` for testing, but these porting codes will be moved to other places (like merging them to `Zygote.jl`) in the future.
 
-## Why we need LinalgBackwards.jl?
+## Why we need BackwardsLinalg.jl?
 Not only in Julia, but also in well known machine learning packages in python like pytorch, one can hardly find a numerical stable implementations of linear algebra function. This missing piece is crutial to autodiff applications in tensor networks algorithms.
 
 ## Table of Supported Functions
@@ -30,7 +30,7 @@ Derivation of adjoint backward functions could be found [here](https://giggleliu
 ## How to Use
 It currently ports into `Zygote.jl`
 ```julia
-using Zygote, LinalgBackwards
+using Zygote, BackwardsLinalg
 
 function loss(A)
     M, N = size(A)
