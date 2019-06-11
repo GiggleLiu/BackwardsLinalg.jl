@@ -1,7 +1,7 @@
 # Backward functions for Linear Algebra
 
-[![Build Status](https://travis-ci.com/GiggleLiu/LinalgBackwards.jl.svg?branch=master)](https://travis-ci.com/GiggleLiu/LinalgBackwards.jl)
-[![Codecov](https://codecov.io/gh/GiggleLiu/LinalgBackwards.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/GiggleLiu/LinalgBackwards.jl)
+[![Build Status](https://travis-ci.com/GiggleLiu/BackwardsLinalg.jl.svg?branch=master)](https://travis-ci.com/GiggleLiu/BackwardsLinalg.jl)
+[![Codecov](https://codecov.io/gh/GiggleLiu/BackwardsLinalg.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/GiggleLiu/BackwardsLinalg.jl)
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) This project is still in progress ...
 
