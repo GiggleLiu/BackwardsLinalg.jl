@@ -1,7 +1,7 @@
-name = "LinalgBackwards"
-uuid = "8dad3b0d-1a4d-5faa-9471-8c404674cf7c"
+name = "BackwardsLinalg"
+uuid = "442b4e1a-8b9d-11e9-03b0-f14b31742153"
 authors = ["JinGuo Liu", "Lei Wang"]
-version = "0.1.1"
+version = "0.1.0"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"

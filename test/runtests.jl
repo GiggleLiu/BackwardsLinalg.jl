@@ -1,5 +1,5 @@
 using Test
-@testset "LinalgBackwards.jl" begin
+@testset "BackwardsLinalg.jl" begin
     include("qr.jl")
     include("svd.jl")
     include("eigen.jl")

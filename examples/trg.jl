@@ -1,4 +1,4 @@
-using LinalgBackwards
+using BackwardsLinalg
 using LinearAlgebra:svd, Diagonal
 using TensorOperations
 using Flux, Test

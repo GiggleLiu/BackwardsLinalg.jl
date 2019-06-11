@@ -1,4 +1,4 @@
-module LinalgBackwards
+module BackwardsLinalg
 import LinearAlgebra: svd, qr, lq, eigen
 using LinearAlgebra
 

@@ -1,8 +1,8 @@
-# LinalgBackwards.jl
+# BackwardsLinalg.jl
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [LinalgBackwards]
+Modules = [BackwardsLinalg]
 ```

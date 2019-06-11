@@ -1,4 +1,4 @@
-using LinalgBackwards
+using BackwardsLinalg
 using Random
 using Test
 

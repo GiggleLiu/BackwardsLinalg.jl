@@ -1,5 +1,5 @@
 using Test
-using LinalgBackwards
+using BackwardsLinalg
 using Random, LinearAlgebra
 
 @testset "svd grad U" begin

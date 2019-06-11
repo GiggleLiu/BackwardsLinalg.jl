@@ -1,4 +1,4 @@
-using LinalgBackwards
+using BackwardsLinalg
 using Test, Random
 
 @testset "qr Q complex" begin
