@@ -2,7 +2,7 @@ module BackwardsLinalg
 import LinearAlgebra: svd, qr, lq, eigen
 using LinearAlgebra
 
-export svd, qr, lq, eigen, rsvd
+export svd, qr, lq, symeigen, rsvd
 
 struct ZeroAdder end
 Base.:+(a, zero::ZeroAdder) = a

@@ -27,10 +27,10 @@ end
     (U, S, V), dy -> (svd_back(U, S, V, dy...),)
 end
 
-@adjoint function eigen(A)
+@adjoint function symeigen(A)
     E, U = eigen(A)
     U = Matrix(U)
-    (E, U), adjy -> (eigen_back(E, U, adjy...),)
+    (E, U), adjy -> (symeigen_back(E, U, adjy...),)
 end
 
 function gradient_check(f, args...; η = 1e-5)

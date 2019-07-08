@@ -1,8 +1,13 @@
+function symeigen(A::AbstractMatrix)
+    E, U = eigen(A)
+    E, Matrix(U)
+end
+
 """
 References:
     * Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
 """
-function eigen_back(E, U, dE, dU; η=1e-40) where T
+function symeigen_back(E, U, dE, dU; η=1e-40) where T
     all(x->x isa Nothing, (dU, dE)) && return nothing
     if dU === nothing
         D = Diagonal(dE)
