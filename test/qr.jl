@@ -19,8 +19,8 @@ using Test, Random
         end
         @test gradient_check(tfunc, A)
     end
-    a = [1 2; 3 4]
-    @test copyltu!(a) == [1 3; 3 4]
+    a = [1+1im 2+1im; 3-1im 4+2im]
+    @test copyltu!(a) ≈ [1 3+1im; 3-1im 4]
 end
 
 @testset "lq" begin

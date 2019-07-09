@@ -1,5 +1,7 @@
 export qr_back, copyltu!, lq, lq_back
 
+trtrs!(c1::Char, c2::Char, c3::Char, r::AbstractMatrix, b::AbstractVecOrMat) = LAPACK.trtrs!(c1, c2, c3, r, b)
+
 """
     copyltu!(A::AbstractMatrix) -> AbstractMatrix
 
@@ -7,7 +9,7 @@ copy the lower triangular to upper triangular.
 """
 function copyltu!(A::AbstractMatrix)
     m, n = size(A)
-    for i=1:m-1
+    for i=1:m
         A[i,i] = real(A[i,i])
         for j=i+1:n
             @inbounds A[i,j] = conj(A[j,i])
@@ -30,8 +32,10 @@ References:
     (!dqnot0 && !drnot0) && return :(nothing)
     ex = drnot0 && dqnot0 ? :(r*dr' - dq'*q) : (dqnot0 ? :(-dq'*q) : :(r*dr'))
     :(b = $(dqnot0 ? :(dq) : :(ZeroAdder())) + q*copyltu!($ex);
-      LAPACK.trtrs!('U', 'N', 'N', r, Matrix(b'))')
+    trtrs!('U', 'N', 'N', r, do_adjoint(b))')
 end
+
+do_adjoint(A::Matrix) = Matrix(A')
 
 """
     qr_back(A, q, r, dq, dr) -> Matrix
@@ -82,7 +86,7 @@ function lq_back_fullrank(L, Q, dL, dQ)
         C += dQ
     end
     #inv(L)' * C
-    LAPACK.trtrs!('L', 'C', 'N', L, C)
+    trtrs!('L', 'C', 'N', L, C)
 end
 
 """

@@ -1,6 +1,6 @@
 module BackwardsLinalg
 import LinearAlgebra: svd, qr, lq, eigen
-using LinearAlgebra
+using LinearAlgebra, Requires
 
 export svd, qr, lq, symeigen, rsvd
 
@@ -14,7 +14,10 @@ Base.:-(zero::ZeroAdder) = zero
 include("qr.jl")
 include("svd.jl")
 include("rsvd.jl")
-include("eigen.jl")
+include("symeigen.jl")
 include("zygote.jl")
 
+function __init__()
+    @require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("cudalib.jl")
+end
 end
