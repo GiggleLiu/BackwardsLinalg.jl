@@ -3,7 +3,7 @@ using LinearAlgebra
 """
 randomized SVD.
 """
-function rsvd(A::Array{T}, k::Int=min(size(A)...), oversample::Int=10, power::Int=10, ortho::Bool=false) where T
+function rsvd(A::AbstractArray{T}, k::Int=min(size(A)...), oversample::Int=10, power::Int=10, ortho::Bool=false) where T
     m, n = size(A)
     p = min(n,oversample*k)
     Y = A * randn(T, n,p)
