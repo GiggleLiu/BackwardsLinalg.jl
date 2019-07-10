@@ -13,6 +13,4 @@ _*.dat
 *.swp
 __pycache__/
 
-Manifest.toml
-
 _local/
