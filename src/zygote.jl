@@ -10,6 +10,12 @@ export gradient_check
     (Q, R), dy -> (qr_back(A, Q, R, dy...),)
 end
 
+@adjoint function qr(A::AbstractMatrix, pivot::Val{true})
+    res = qr(A, pivot)
+    Q, R, P = Matrix(res.Q), res.R, res.P
+    (Q, R, P), dy -> (qr_back(Q*R, Q, R, dy[1], dy[2])*P',nothing)
+end
+
 @adjoint function lq(A)
     res = lq(A)
     L, Q = res.L, Matrix(res.Q)
