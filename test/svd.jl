@@ -39,6 +39,23 @@ end
     end
 end
 
+@testset "svd grad U,V" begin
+    function loss_uv(A)
+        M, N = size(A)
+        U, S, V = svd(A)
+        psi = V[1,1]
+        psi_l = U[1,1]
+        real(conj(psi_l)*psi)[]
+    end
+
+    for (M, N) in [(6, 3), (3, 6), (3,3)]
+        K = min(M, N)
+        a = randn(ComplexF64, M,N)
+        @show loss_uv(a)
+        @test gradient_check(loss_uv, a)
+    end
+end
+
 @testset "svd grad S" begin
     function loss(A)
         U, S, V = svd(A)
