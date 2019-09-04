@@ -56,6 +56,26 @@ end
     end
 end
 
+@testset "svd grad U,V imag diag" begin
+    function loss_uv(A)
+        M, N = size(A)
+        U, S, V = svd(A)
+        psi = V[1,1]
+        psi_l = U[1,1]
+        real(conj(psi_l)*psi)[]
+    end
+
+    A = [-1+1im 2+1im;1-2im 3+0.8im]
+    @show loss_uv(A)
+    da = [0 0; 1 0im]
+    ndiff = (loss_uv(A .+ 1e-4*da) - loss_uv(A .- 1e-4*da)) ./ 2e-4 + im*(loss_uv(A .+ 1e-4im*da) - loss_uv(A .- 1e-4im*da)) ./ 2e-4
+    grad = loss_uv'(A)
+    @show grad[2,1], ndiff
+    @test gradient_check(loss_uv, A)
+    @test isapprox(grad[2,1], ndiff, atol=1e-3)
+    end
+end
+
 @testset "svd grad S" begin
     function loss(A)
         U, S, V = svd(A)
