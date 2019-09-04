@@ -73,7 +73,6 @@ end
     @show grad[2,1], ndiff
     @test gradient_check(loss_uv, A)
     @test isapprox(grad[2,1], ndiff, atol=1e-3)
-    end
 end
 
 @testset "svd grad S" begin
