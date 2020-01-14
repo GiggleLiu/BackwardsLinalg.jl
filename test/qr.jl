@@ -59,7 +59,6 @@ end
             Q, R, P = qr(x, Val(true))
             v = Q[:,1]
             v2 = R[2,:]
-            @show size(v), size(v2), size(op), size(op2)
             (v'*op*v + v2'*op2*v2)[] |> real
         end
         @show tfunc(A)

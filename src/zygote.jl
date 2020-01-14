@@ -5,26 +5,22 @@ using Random
 export gradient_check
 
 @adjoint function qr(A)
-    res = qr(A)
-    Q, R = Matrix(res.Q), res.R
+		Q, R = qr(A) 
     (Q, R), dy -> (qr_back(A, Q, R, dy...),)
 end
 
 @adjoint function qr(A::AbstractMatrix, pivot::Val{true})
-    res = qr(A, pivot)
-    Q, R, P = Matrix(res.Q), res.R, res.P
+		Q, R, P = qr(A, pivot) 
     (Q, R, P), dy -> (qr_back(Q*R, Q, R, dy[1], dy[2])*P',nothing)
 end
 
 @adjoint function lq(A)
-    res = lq(A)
-    L, Q = res.L, Matrix(res.Q)
+    L, Q = lq(A)
     (L, Q), dy -> (lq_back(A, L, Q, dy...),)
 end
 
 @adjoint function svd(A)
     U, S, V = svd(A)
-    V = Matrix(V)
     (U, S, V), dy -> (svd_back(U, S, V, dy...),)
 end
 
@@ -34,8 +30,7 @@ end
 end
 
 @adjoint function symeigen(A)
-    E, U = eigen(A)
-    U = Matrix(U)
+    E, U = symeigen(A)
     (E, U), adjy -> (symeigen_back(E, U, adjy...),)
 end
 

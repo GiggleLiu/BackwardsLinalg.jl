@@ -1,6 +1,35 @@
-export qr_back, copyltu!, lq, lq_back
+export qr, qr_back, copyltu!, lq, lq_back
 
-trtrs!(c1::Char, c2::Char, c3::Char, r::AbstractMatrix, b::AbstractVecOrMat) = LAPACK.trtrs!(c1, c2, c3, r, b)
+
+"""
+		qr(A) -> Tuple{AbstractMatrix, AbstractMatrix}
+
+private QR method, call LinearAlgebra.qr to achieve forward calculation, while
+return Tuple type
+"""
+function qr(A)
+	res = LinearAlgebra.qr(A)
+	Matrix(res.Q), res.R
+end
+
+"""
+		qr(A, pivot) -> Tuple{AbstractMatrix, AbstractMatrix, AbstractVector}
+"""
+function qr(A::AbstractMatrix, pivot::Val{true})
+    res = LinearAlgebra.qr(A, pivot)
+    Q, R, P = Matrix(res.Q), res.R, res.P
+end
+
+"""
+		lq(A) -> Tuple{AbstractMatrix, AbstractMatrix}
+"""
+function lq(A)
+		res = LinearAlgebra.lq(A)
+    res.L, Matrix(res.Q)
+end
+
+
+trtrs!(c1::Char, c2::Char, c3::Char, r::AbstractMatrix, b::AbstractVecOrMat) = LinearAlgebra.LAPACK.trtrs!(c1, c2, c3, r, b)
 
 """
     copyltu!(A::AbstractMatrix) -> AbstractMatrix
