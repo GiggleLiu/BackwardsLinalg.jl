@@ -1,6 +1,6 @@
 module BackwardsLinalg
-import LinearAlgebra: svd, qr, lq, eigen
-using LinearAlgebra, Requires
+using LinearAlgebra
+using Requires
 
 export svd, qr, lq, symeigen, rsvd
 

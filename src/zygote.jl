@@ -5,14 +5,12 @@ using Random
 export gradient_check
 
 @adjoint function qr(A)
-    res = qr(A)
-    Q, R = Matrix(res.Q), res.R
+		Q, R = qr(A) 
     (Q, R), dy -> (qr_back(A, Q, R, dy...),)
 end
 
 @adjoint function qr(A::AbstractMatrix, pivot::Val{true})
-    res = qr(A, pivot)
-    Q, R, P = Matrix(res.Q), res.R, res.P
+		Q, R, P = qr(A, pivot) 
     (Q, R, P), dy -> (qr_back(Q*R, Q, R, dy[1], dy[2])*P',nothing)
 end
 
