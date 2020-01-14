@@ -1,4 +1,14 @@
+export svd, svd_back
+
 mpow2(a::AbstractArray) = a .^ 2
+
+"""
+		svd(A) -> Tuple{AbstractMatrix, AbstractVector, AbstractMatrix}
+"""
+function svd(A)
+	U, S, V = LinearAlgebra.svd(A)
+	return U, S, Matrix(V)
+end
 
 """
     svd_back(U, S, V, dU, dS, dV)
@@ -22,25 +32,25 @@ function svd_back(U::AbstractArray, S::AbstractArray{T}, V, dU, dS, dV; η::Real
     if !(dU isa Nothing)
         UdU = U'*dU
         J = F.*(UdU)
-        res += (J+J')*Diagonal(S) + Diagonal(1im*imag(diag(UdU)) .* Sinv)
+        res += (J+J')*LinearAlgebra.Diagonal(S) + LinearAlgebra.Diagonal(1im*imag(LinearAlgebra.diag(UdU)) .* Sinv)
     end
     if !(dV isa Nothing)
         VdV = V'*dV
         K = F.*(VdV)
-        res += Diagonal(S) * (K+K')
+        res += LinearAlgebra.Diagonal(S) * (K+K')
     end
     if !(dS isa Nothing)
-        res += Diagonal(dS)
+        res += LinearAlgebra.Diagonal(dS)
     end
 
     res = U*res*V'
 
     if !(dU isa Nothing) && size(U, 1) != size(U, 2)
-        res += (dU - U* (U'*dU)) * Diagonal(Sinv) * V'
+        res += (dU - U* (U'*dU)) * LinearAlgebra.Diagonal(Sinv) * V'
     end
 
     if !(dV isa Nothing) && size(V, 1) != size(V, 2)
-        res = res + U * Diagonal(Sinv) * (dV' - (dV'*V)*V')
+        res = res + U * LinearAlgebra.Diagonal(Sinv) * (dV' - (dV'*V)*V')
     end
     res
 end

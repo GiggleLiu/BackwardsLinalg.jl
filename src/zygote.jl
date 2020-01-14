@@ -15,14 +15,12 @@ end
 end
 
 @adjoint function lq(A)
-    res = lq(A)
-    L, Q = res.L, Matrix(res.Q)
+    L, Q = lq(A)
     (L, Q), dy -> (lq_back(A, L, Q, dy...),)
 end
 
 @adjoint function svd(A)
     U, S, V = svd(A)
-    V = Matrix(V)
     (U, S, V), dy -> (svd_back(U, S, V, dy...),)
 end
 
@@ -32,8 +30,7 @@ end
 end
 
 @adjoint function symeigen(A)
-    E, U = eigen(A)
-    U = Matrix(U)
+    E, U = symeigen(A)
     (E, U), adjy -> (symeigen_back(E, U, adjy...),)
 end
 

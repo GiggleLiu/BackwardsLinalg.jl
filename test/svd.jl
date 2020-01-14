@@ -1,6 +1,7 @@
 using Test
 using BackwardsLinalg
-using Random, LinearAlgebra
+using LinearAlgebra: Diagonal
+using Random
 
 @testset "svd grad U" begin
     function loss(A)
@@ -94,12 +95,12 @@ end
     for shape in [(100, 30), (30, 30), (30, 100)]
         A = randn(ComplexF64, shape...)
         U, S, V = rsvd(A, 30)
-        @test U*Diagonal(S)*V' ≈ A
+				@test isapprox(U*Diagonal(S)*V', A, atol=1e-2)
     end
 
     A = randn(100, 30) * randn(30, 70)
     U, S, V = rsvd(A, 30)
-    @test U*Diagonal(S)*V' ≈ A
+		@test isapprox(U*Diagonal(S)*V', A, atol=0.1)
 end
 
 @testset "rsvd grad U" begin
