@@ -37,7 +37,7 @@ end
 function gradient_check(f, args...; η = 1e-5)
     g = gradient(f, args...)
     dy_expect = η*sum(abs2.(g[1]))
-    dy = f(args...)-f([gi == nothing ? arg : arg.-η.*gi for (arg, gi) in zip(args, g)]...)
+    dy = f(args...)-f([gi === nothing ? arg : arg.-η.*gi for (arg, gi) in zip(args, g)]...)
     @show dy
     @show dy_expect
     isapprox(dy, dy_expect, rtol=1e-2, atol=1e-8)
@@ -47,5 +47,5 @@ end
 
 @adjoint function lstsq(A, b)
 	x = lstsq(A, b) 
-    (x,), dx -> (lstsq_back(A, b, x, dx),)
+    x, dx -> lstsq_back(A, b, x, dx)
 end
