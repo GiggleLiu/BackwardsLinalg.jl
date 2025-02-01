@@ -44,3 +44,8 @@ function gradient_check(f, args...; η = 1e-5)
 end
 
 @adjoint Random.seed!(n) = Random.seed!(n), _ -> nothing
+
+@adjoint function lstsq(A, b)
+	x = lstsq(A, b) 
+    (x,), dx -> (lstsq_back(A, b, x, dx),)
+end

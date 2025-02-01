@@ -13,6 +13,7 @@ Base.:-(zero::ZeroAdder) = zero
 
 include("qr.jl")
 include("svd.jl")
+include("lstsq.jl")
 include("rsvd.jl")
 include("symeigen.jl")
 include("zygote.jl")
