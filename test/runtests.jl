@@ -11,3 +11,7 @@ end
 @testset "eigen" begin
     include("eigen.jl")
 end
+
+@testset "lstsq" begin
+    include("lstsq.jl")
+end
