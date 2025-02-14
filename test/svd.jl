@@ -103,7 +103,7 @@ end
 @testset "rsvd" begin
     for shape in [(100, 30), (30, 30), (30, 100)]
         A = randn(ComplexF64, shape...)
-        U, S, V = rsvd(A, 30)
+        U, S, V = BackwardsLinalg.rsvd(A, 30)
 				@test isapprox(U*Diagonal(S)*V', A, atol=1e-2)
     end
 
@@ -113,17 +113,16 @@ end
 end
 
 @testset "rsvd grad U" begin
+    H = randn(ComplexF64, 3, 3)
+    H+=H'
     function loss(A)
         M, N = size(A)
         U, S, V = BackwardsLinalg.rsvd(A)
         psi = U[:,1]
-        Random.seed!(2)
-        H = randn(ComplexF64, M, M)
-        H+=H'
         real(psi'*H*psi)[]
     end
 
-    for (M, N) in [(6, 3), (3, 6), (3,3)]
+    for (M, N) in [(3, 2), (3, 6), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M, N)
         @test gradient_check(loss, a)
@@ -132,17 +131,16 @@ end
 
 
 @testset "rsvd grad V" begin
+    H = randn(ComplexF64, 3, 3)
+    H+=H'
     function loss_v(A)
         M, N = size(A)
         U, S, V = BackwardsLinalg.rsvd(A)
-        Random.seed!(2)
-        H = randn(ComplexF64, N, N)
-        H+=H'
         psi = V[:,1]
         real(psi'*H*psi)[]
     end
 
-    for (M, N) in [(6, 3), (3, 6), (3,3)]
+    for (M, N) in [(2, 3), (6, 3), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M,N)
         @test gradient_check(loss_v, a)

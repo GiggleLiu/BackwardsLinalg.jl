@@ -17,11 +17,11 @@ end
     op = randn(4, 4)
     op += op'
     function f(A)
-        E, U = symeigen(A)
+        E, U = BackwardsLinalg.symeigen(A)
         E |> sum
     end
     function g(A)
-        E, U = symeigen(A)
+        E, U = BackwardsLinalg.symeigen(A)
         v = U[:,1]
         (v'*op*v)[]|>real
     end
@@ -36,11 +36,11 @@ end
     op = randn(ComplexF64, 4, 4)
     op += op'
     function f(A)
-        E, U = symeigen(A)
+        E, U = BackwardsLinalg.symeigen(A)
         E |> sum
     end
     function g(A)
-        E, U = symeigen(A)
+        E, U = BackwardsLinalg.symeigen(A)
         v = U[:,1]
         (v'*op*v)[]|>real
     end
