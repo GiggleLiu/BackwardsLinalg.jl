@@ -1,8 +1,7 @@
 function rrule(::typeof(qr), A)
 	Q, R = qr(A)
     function pullback(dy)
-        Δy = unthunk(dy)
-        ΔA = @thunk qr_back(A, Q, R, Δy...)
+        ΔA = @thunk qr_back(A, Q, R, unthunk.(dy)...)
         return (NoTangent(), ΔA)
     end
     return (Q, R), pullback
@@ -11,8 +10,7 @@ end
 function rrule(::typeof(qr), A::AbstractMatrix, pivot::Val{true})
 	Q, R, P = qr(A, pivot) 
     function pullback(dy)
-        Δy = unthunk(dy)
-        ΔA = @thunk qr_back(Q*R, Q, R, Δy[1], Δy[2])*P'
+        ΔA = @thunk qr_back(Q*R, Q, R, unthunk(dy[1]), unthunk(dy[2]))*P'
         return (NoTangent(), ΔA, NoTangent())
     end
     return (Q, R, P), pullback
@@ -21,8 +19,7 @@ end
 function rrule(::typeof(lq), A)
     L, Q = lq(A)
     function pullback(dy)
-        Δy = unthunk(dy)
-        ΔA = @thunk lq_back(A, L, Q, Δy...)
+        ΔA = @thunk lq_back(A, L, Q, unthunk.(dy)...)
         return (NoTangent(), ΔA)
     end
     return (L, Q), pullback
@@ -33,8 +30,7 @@ function rrule(::typeof(svd), A)
     @info "svd forward" U S V
     function pullback(dy)
         @info "svd pullback"
-        Δy = unthunk(dy)
-        ΔA = @thunk svd_back(U, S, V, Δy...)
+        ΔA = @thunk svd_back(U, S, V, unthunk.(dy)...)
         return (NoTangent(), ΔA)
     end
     return (U, S, V), pullback
@@ -43,8 +39,7 @@ end
 function rrule(::typeof(rsvd), A, args...; kwargs...)
     U, S, V = rsvd(A, args...; kwargs...)
     function pullback(dy)
-        Δy = unthunk(dy)
-        ΔA = @thunk svd_back(U, S, V, Δy...)
+        ΔA = @thunk svd_back(U, S, V, unthunk.(dy)...)
         return (NoTangent(), ΔA)
     end
     return (U, S, V), pullback
@@ -53,8 +48,7 @@ end
 function rrule(::typeof(symeigen), A)
     E, U = symeigen(A)
     function pullback(dy)
-        Δy = unthunk(dy)
-        ΔA = @thunk symeigen_back(E, U, Δy...)
+        ΔA = @thunk symeigen_back(E, U, unthunk.(dy)...)
         return (NoTangent(), ΔA)
     end
     return (E, U), pullback

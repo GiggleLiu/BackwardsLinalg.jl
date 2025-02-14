@@ -73,20 +73,19 @@ References:
     Differentiable Programming Tensor Networks, Hai-Jun Liao, Jin-Guo Liu, Lei Wang, Tao Xiang
 """
 function qr_back(A, q, r, dq, dr)
-    Δq, Δr = unthunk(dq), unthunk(dr)
-    dqnot0 = !(Δq isa AbstractZero)
-    drnot0 = !(Δr isa AbstractZero)
+    dqnot0 = !(dq isa AbstractZero)
+    drnot0 = !(dr isa AbstractZero)
     (!dqnot0 && !drnot0) && return NoTangent()
-    size(r, 1) == size(r, 2) && return qr_back_fullrank(q, r, Δq, Δr)
+    size(r, 1) == size(r, 2) && return qr_back_fullrank(q, r, dq, dr)
     M, N = size(r)
     B = view(A,:,M+1:N)
     U = view(r,:,1:M)
     if drnot0
-        dD = view(Δr,:,M+1:N);
-        da = qr_back_fullrank(q, U, (dqnot0 ? Δq+B*dD' : B*dD'), view(Δr,:,1:M))
+        dD = view(dr,:,M+1:N);
+        da = qr_back_fullrank(q, U, (dqnot0 ? dq+B*dD' : B*dD'), view(dr,:,1:M))
         db = q*dD
     else
-        da = qr_back_fullrank(q, U, Δq, ZeroTangent())
+        da = qr_back_fullrank(q, U, dq, ZeroTangent())
         db = zero(B)
     end
     hcat(da, db)
@@ -102,14 +101,9 @@ References:
     Differentiable Programming Tensor Networks, Hai-Jun Liao, Jin-Guo Liu, Lei Wang, Tao Xiang
 """
 function lq_back_fullrank(L, Q, dL, dQ)
-    M = ZeroAdder()
-    dL === nothing || (M += L'*dL)
-    dQ === nothing || (M -= dQ*Q')
+    M = L'*dL - dQ*Q'
     C = copyltu!(M)*Q
-    if dQ !== nothing
-        C += dQ
-    end
-    #inv(L)' * C
+    C += dQ
     trtrs!('L', 'C', 'N', L, C)
 end
 
@@ -123,20 +117,19 @@ References:
     HaiJun's paper.
 """
 function lq_back(A, L, Q, dL, dQ)
-    ΔL, ΔQ = unthunk(dL), unthunk(dQ)
-    dunot0 = !(ΔQ isa AbstractZero)
-    dlnot0 = !(ΔL isa AbstractZero)
+    dunot0 = !(dQ isa AbstractZero)
+    dlnot0 = !(dL isa AbstractZero)
     (!dunot0 && !dlnot0) && return NoTangent()
     N, M = size(L)
-    M == N && return lq_back_fullrank(L, Q, ΔL, ΔQ)
+    M == N && return lq_back_fullrank(L, Q, dL, dQ)
     B = view(A,M+1:N,:)
     U = view(L,1:M,:)
     if dlnot0
-        dD = view(ΔL,M+1:N,:);
-        da = lq_back_fullrank(U, Q, view(ΔL,1:M,:), (dunot0 ? ΔQ+dD'*B : dD'*B));
+        dD = view(dL,M+1:N,:);
+        da = lq_back_fullrank(U, Q, view(dL,1:M,:), (dunot0 ? dQ+dD'*B : dD'*B));
         db = dD*Q
     else
-        da = lq_back_fullrank(U, Q, ZeroTangent(), ΔQ);
+        da = lq_back_fullrank(U, Q, ZeroTangent(), dQ);
         db = zero(B)
     end
     vcat(da, db)

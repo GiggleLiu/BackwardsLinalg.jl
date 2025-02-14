@@ -1,7 +1,6 @@
 module BackwardsLinalg
 
 using ChainRulesCore; import ChainRulesCore: rrule
-using Random
 using LinearAlgebra; import LinearAlgebra: ldiv!
 
 struct ZeroAdder end

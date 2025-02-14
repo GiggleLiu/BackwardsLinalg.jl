@@ -1,8 +1,8 @@
 using BackwardsLinalg
-using Test, Random
+using Test, Random, Zygote
 
 function gradient_check(f, args...; η = 1e-5)
-    g = gradient(f, args...)
+    g = Zygote.gradient(f, args...)
     dy_expect = η*sum(abs2.(g[1]))
     dy = f(args...)-f([gi === nothing ? arg : arg.-η.*gi for (arg, gi) in zip(args, g)]...)
     @show dy
@@ -14,6 +14,7 @@ end
     T = ComplexF64
     Random.seed!(3)
     for (M, N) in [(2, 6), (4, 4), (6, 2)]
+        @show M, N
         A = randn(T, M, N)
         op = randn(M, M)
         op += op'

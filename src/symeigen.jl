@@ -8,9 +8,9 @@ References:
     * Seeger, M., Hetzel, A., Dai, Z., Meissner, E., & Lawrence, N. D. (2018). Auto-Differentiating Linear Algebra.
 """
 function symeigen_back(E::AbstractVector{T}, U, dE, dU; η=1e-40) where T
-    all(x->x isa Nothing, (dU, dE)) && return nothing
+    all(x->x isa AbstractZero, (dU, dE)) && return NoTangent()
     η = T(η)
-    if dU === nothing
+    if dU isa AbstractZero
         D = LinearAlgebra.Diagonal(dE)
     else
         F = E .- E'
