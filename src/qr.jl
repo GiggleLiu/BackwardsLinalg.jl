@@ -1,6 +1,3 @@
-export qr, qr_back, copyltu!, lq, lq_back
-
-
 """
 		qr(A) -> Tuple{AbstractMatrix, AbstractMatrix}
 

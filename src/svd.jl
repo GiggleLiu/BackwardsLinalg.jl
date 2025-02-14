@@ -1,5 +1,3 @@
-export svd, svd_back
-
 mpow2(a::AbstractArray) = a .^ 2
 
 """
@@ -29,17 +27,17 @@ function svd_back(U::AbstractArray, S::AbstractArray{T}, V, dU, dS, dV; η::Real
     F ./= (mpow2(F) .+ η)
 
     res = ZeroAdder()
-    if !(dU isa Nothing)
+    if !(dU isa ZeroTangent)
         UdU = U'*dU
         J = F.*(UdU)
         res += (J+J')*LinearAlgebra.Diagonal(S) + LinearAlgebra.Diagonal(1im*imag(LinearAlgebra.diag(UdU)) .* Sinv)
     end
-    if !(dV isa Nothing)
+    if !(dV isa ZeroTangent)
         VdV = V'*dV
         K = F.*(VdV)
         res += LinearAlgebra.Diagonal(S) * (K+K')
     end
-    if !(dS isa Nothing)
+    if !(dS isa ZeroTangent)
         res += LinearAlgebra.Diagonal(dS)
     end
 
