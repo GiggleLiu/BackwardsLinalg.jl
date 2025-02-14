@@ -15,3 +15,5 @@ __pycache__/
 
 _local/
 Manifest.toml
+
+.vscode/

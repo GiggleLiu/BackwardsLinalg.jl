@@ -17,7 +17,7 @@ function symeigen_back(E::AbstractVector{T}, U, dE, dU; η=1e-40) where T
         F .= F./(F.^2 .+ η)
         dUU = dU' * U .* F
         D = (dUU + dUU')/2
-        if dE !== nothing
+        if !(dE isa AbstractZero)
             D = D + LinearAlgebra.Diagonal(dE)
         end
     end

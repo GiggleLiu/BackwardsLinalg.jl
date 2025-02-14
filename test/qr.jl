@@ -1,6 +1,15 @@
 using BackwardsLinalg
 using Test, Random
 
+function gradient_check(f, args...; η = 1e-5)
+    g = gradient(f, args...)
+    dy_expect = η*sum(abs2.(g[1]))
+    dy = f(args...)-f([gi === nothing ? arg : arg.-η.*gi for (arg, gi) in zip(args, g)]...)
+    @show dy
+    @show dy_expect
+    isapprox(dy, dy_expect, rtol=1e-2, atol=1e-8)
+end
+
 @testset "qr Q complex" begin
     T = ComplexF64
     Random.seed!(3)
@@ -12,7 +21,7 @@ using Test, Random
         op2 += op2'
 
         function tfunc(x)
-            Q, R = qr(x)
+            Q, R = BackwardsLinalg.qr(x)
             v = Q[:,1]
             v2 = R[2,:]
             (v'*op*v + v2'*op2*v2)[] |> real
@@ -20,7 +29,7 @@ using Test, Random
         @test gradient_check(tfunc, A)
     end
     a = [1+1im 2+1im; 3-1im 4+2im]
-    @test copyltu!(a) ≈ [1 3+1im; 3-1im 4]
+    @test BackwardsLinalg.copyltu!(a) ≈ [1 3+1im; 3-1im 4]
 end
 
 @testset "lq" begin
@@ -36,7 +45,7 @@ end
         op2 += op2'
 
         function tfunc(x)
-            L, Q = lq(x)
+            L, Q = BackwardsLinalg.lq(x)
             v = L[:,1]
             v2 = Q[2,:]
             (v'*op*v + v2'*op2*v2)[] |> real
@@ -56,7 +65,7 @@ end
         op2 += op2'
 
         function tfunc(x)
-            Q, R, P = qr(x, Val(true))
+            Q, R, P = BackwardsLinalg.qr(x, Val(true))
             v = Q[:,1]
             v2 = R[2,:]
             (v'*op*v + v2'*op2*v2)[] |> real
@@ -65,5 +74,5 @@ end
         @test gradient_check(tfunc, A)
     end
     a = [1+1im 2+1im; 3-1im 4+2im]
-    @test copyltu!(a) ≈ [1 3+1im; 3-1im 4]
+    @test BackwardsLinalg.copyltu!(a) ≈ [1 3+1im; 3-1im 4]
 end

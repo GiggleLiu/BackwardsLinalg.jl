@@ -1,5 +1,3 @@
-using LinearAlgebra
-
 function powermethod(A, x0::AbstractVector=randn(size(A, 2)) |> normalize!; niter::Int=1000)
     e,v = eigen(A)
     return e[1], v[:,1]

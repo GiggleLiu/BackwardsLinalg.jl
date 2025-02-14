@@ -1,8 +1,8 @@
 module BackwardsLinalg
-import LinearAlgebra
-using Requires
 
-export svd, qr, lq, symeigen, rsvd, lstsq
+using ChainRulesCore; import ChainRulesCore: rrule
+using Random
+using LinearAlgebra; import LinearAlgebra: ldiv!
 
 struct ZeroAdder end
 Base.:+(a, zero::ZeroAdder) = a
@@ -16,9 +16,6 @@ include("svd.jl")
 include("lstsq.jl")
 include("rsvd.jl")
 include("symeigen.jl")
-include("zygote.jl")
+include("chainrules.jl")
 
-function __init__()
-    @require CuArrays="3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("cudalib.jl")
-end
 end

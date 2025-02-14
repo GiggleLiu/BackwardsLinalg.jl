@@ -3,18 +3,27 @@ using BackwardsLinalg
 using LinearAlgebra: Diagonal
 using Random
 
+function gradient_check(f, args...; η = 1e-5)
+    g = gradient(f, args...)
+    dy_expect = η*sum(abs2.(g[1]))
+    dy = f(args...)-f([gi === nothing ? arg : arg.-η.*gi for (arg, gi) in zip(args, g)]...)
+    @show dy
+    @show dy_expect
+    isapprox(dy, dy_expect, rtol=1e-2, atol=1e-8)
+end
+
+
 @testset "svd grad U" begin
+    H = randn(ComplexF64, 3, 3)
+    H+=H'
     function loss(A)
         M, N = size(A)
-        U, S, V = svd(A)
+        U, S, V = BackwardsLinalg.svd(A)
         psi = U[:,1]
-        Random.seed!(2)
-        H = randn(ComplexF64, M, M)
-        H+=H'
         real(psi'*H*psi)[]
     end
 
-    for (M, N) in [(6, 3), (3, 6), (3,3)]
+    for (M, N) in [(3, 2), (3, 6), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M, N)
         @test gradient_check(loss, a)
@@ -22,17 +31,17 @@ using Random
 end
 
 @testset "svd grad V" begin
+    H = randn(ComplexF64, 3, 3)
+    H+=H'
+
     function loss_v(A)
         M, N = size(A)
-        U, S, V = svd(A)
-        Random.seed!(2)
-        H = randn(ComplexF64, N, N)
-        H+=H'
+        U, S, V = BackwardsLinalg.svd(A)
         psi = V[:,1]
         real(psi'*H*psi)[]
     end
 
-    for (M, N) in [(6, 3), (3, 6), (3,3)]
+    for (M, N) in [(6, 3), (2, 3), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M,N)
         @show loss_v(a)
@@ -43,7 +52,7 @@ end
 @testset "svd grad U,V" begin
     function loss_uv(A)
         M, N = size(A)
-        U, S, V = svd(A)
+        U, S, V = BackwardsLinalg.svd(A)
         psi = V[1,1]
         psi_l = U[1,1]
         real(conj(psi_l)*psi)[]
@@ -60,7 +69,7 @@ end
 @testset "svd grad U,V imag diag" begin
     function loss_uv(A)
         M, N = size(A)
-        U, S, V = svd(A)
+        U, S, V = BackwardsLinalg.svd(A)
         psi = V[1,1]
         psi_l = U[1,1]
         real(conj(psi_l)*psi)[]
@@ -78,7 +87,7 @@ end
 
 @testset "svd grad S" begin
     function loss(A)
-        U, S, V = svd(A)
+        U, S, V = BackwardsLinalg.svd(A)
         S |> sum
     end
 
@@ -94,27 +103,26 @@ end
 @testset "rsvd" begin
     for shape in [(100, 30), (30, 30), (30, 100)]
         A = randn(ComplexF64, shape...)
-        U, S, V = rsvd(A, 30)
+        U, S, V = BackwardsLinalg.rsvd(A, 30)
 				@test isapprox(U*Diagonal(S)*V', A, atol=1e-2)
     end
 
     A = randn(100, 30) * randn(30, 70)
-    U, S, V = rsvd(A, 30)
+    U, S, V = BackwardsLinalg.rsvd(A, 30)
 		@test isapprox(U*Diagonal(S)*V', A, atol=0.1)
 end
 
 @testset "rsvd grad U" begin
+    H = randn(ComplexF64, 3, 3)
+    H+=H'
     function loss(A)
         M, N = size(A)
-        U, S, V = rsvd(A)
+        U, S, V = BackwardsLinalg.rsvd(A)
         psi = U[:,1]
-        Random.seed!(2)
-        H = randn(ComplexF64, M, M)
-        H+=H'
         real(psi'*H*psi)[]
     end
 
-    for (M, N) in [(6, 3), (3, 6), (3,3)]
+    for (M, N) in [(3, 2), (3, 6), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M, N)
         @test gradient_check(loss, a)
@@ -123,17 +131,16 @@ end
 
 
 @testset "rsvd grad V" begin
+    H = randn(ComplexF64, 3, 3)
+    H+=H'
     function loss_v(A)
         M, N = size(A)
-        U, S, V = rsvd(A)
-        Random.seed!(2)
-        H = randn(ComplexF64, N, N)
-        H+=H'
+        U, S, V = BackwardsLinalg.rsvd(A)
         psi = V[:,1]
         real(psi'*H*psi)[]
     end
 
-    for (M, N) in [(6, 3), (3, 6), (3,3)]
+    for (M, N) in [(2, 3), (6, 3), (3,3)]
         K = min(M, N)
         a = randn(ComplexF64, M,N)
         @test gradient_check(loss_v, a)
@@ -142,7 +149,7 @@ end
 
 @testset "rsvd grad S" begin
     function loss(A)
-        U, S, V = rsvd(A)
+        U, S, V = BackwardsLinalg.rsvd(A)
         S |> sum
     end
 
