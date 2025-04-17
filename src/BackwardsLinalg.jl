@@ -33,6 +33,7 @@ include("pf.jl")
 include("normeigen.jl")
 include("fft.jl")
 include("unfft.jl")
+include("matrix_func.jl")
 
 include("chainrules.jl")
 

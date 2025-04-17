@@ -224,3 +224,12 @@ function rrule(::typeof(inufft_t2), k, fhat; args...)
 	end
 	return f, pullback
 end
+
+function rrule(::typeof(matrix_func), f, A)
+	B = matrix_func(f,A)
+	function pullback(B̄)
+		Ā = @thunk matrix_func_back(unthunk(B̄), f, A)
+		return (NoTangent(), NoTangent(), Ā)
+	end
+	return B, pullback
+end
