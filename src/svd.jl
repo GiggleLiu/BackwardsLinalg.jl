@@ -17,6 +17,7 @@ References:
     https://j-towns.github.io/papers/svd-derivative.pdf
     https://giggleliu.github.io/2019/04/02/einsumbp.html
 """
+# Here input S and dS are both vector
 function svd_back(U::AbstractArray, S::AbstractArray{T}, V, dU, dS, dV; η::Real=1e-40) where T
     all(x -> x isa Nothing, (dU, dS, dV)) && return nothing
     η = T(η)

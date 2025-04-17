@@ -5,18 +5,33 @@ version = "0.2.0"
 
 [deps]
 ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+FINUFFT = "d8beea63-0952-562e-9c6a-8e8ef7364055"
+GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
+IterativeSolvers = "42fd0dbc-a981-5370-80f2-aaf504508153"
+JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+NFFT = "efe261a4-0d2b-5849-be55-fc731d526b0d"
+NFFTTools = "7424e34d-94f7-41d6-98a0-85abaf1b6c91"
+SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
+SkewLinearAlgebra = "5c889d49-8c60-4500-9d10-5d3a22e2f4b9"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
 ChainRulesCore = "1.25.1"
+FFTW = "1.8.1"
+FINUFFT = "3.3.1"
+IterativeSolvers = "0.9.4"
 LinearAlgebra = "1"
+NFFT = "0.13.6"
+NFFTTools = "0.2.6"
 julia = "1.10"
 
 [extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 Mooncake = "da2b9cff-9c12-43a0-ae48-6db2b0edb7d6"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [targets]

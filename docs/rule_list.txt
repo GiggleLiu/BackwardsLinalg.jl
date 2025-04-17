@@ -1,0 +1,48 @@
+
+                                       real/complex      test
+matrix multiplication          |        complex          done
+
+tensor network                 |
+
+least sq / arg least sq        |         complex         done
+
+qr (all size)                  |         complex         done
+
+symeigen                       |         complex         done                    
+
+nromal eigen                   |         complex         done
+
+svd                            |         complex         done
+
+rsvd                           |         complex         done
+
+schatten norm                  |          complex        done
+
+matrix inversion               |          complex        done
+
+det                            |          complex        done
+
+lu                             |          complex        done
+
+linear equations               |          compelex       done
+
+expmv                          |
+
+norm matrix analytic function  |          complex        done     
+
+Cholesky decomposition         |          complex        done
+
+LP                             |           real          done 
+
+SDP                            |           real          done
+
+GMRES                          |          complex        done
+
+Pfaffain                       |           real          done
+
+FFT                            |          complex        done
+
+UNFFT(Type 1)                  |          complex        done 
+
+Inverse UNFFT(Type 1)
+
